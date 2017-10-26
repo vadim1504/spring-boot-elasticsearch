@@ -1,5 +1,6 @@
 package by.vadim.spring.elasticsearch.controller;
 
+import by.vadim.spring.elasticsearch.builder.SearchQueryBuilder;
 import by.vadim.spring.elasticsearch.model.Article;
 import by.vadim.spring.elasticsearch.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class SearchController {
 
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private SearchQueryBuilder queryBuilder;
 
     @GetMapping("/name/{text}")
     public Page<Article> searchName(@PathVariable String text){
@@ -35,5 +38,10 @@ public class SearchController {
         List<Article> articles = new ArrayList<>();
         articleService.findAll().forEach(articles::add);
         return articles;
+    }
+
+    @GetMapping("/{text}")
+    public List<Article> getAll(@PathVariable String text){
+       return queryBuilder.getAll(text);
     }
 }
