@@ -6,6 +6,7 @@ import by.vadim.spring.elasticsearch.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,10 +23,17 @@ public class SearchController {
     private ArticleService articleService;
     @Autowired
     private SearchQueryBuilder queryBuilder;
+    @Autowired
+    private ElasticsearchTemplate template;
 
-    @GetMapping("/name/{text}")
-    public Page<Article> searchName(@PathVariable String text){
+    @GetMapping("/nameAuthor/{text}")
+    public Page<Article> searchNameAuthor(@PathVariable String text){
         return articleService.findByAuthorName(text,new PageRequest(0,10));
+    }
+
+    @GetMapping("/nameAuthorCustomQuery/{text}")
+    public Page<Article> searchNameAuthorUsingCustomQuery(@PathVariable String text){
+        return articleService.findByAuthorNameUsingCustomQuery(text,new PageRequest(0,10));
     }
 
     @GetMapping("/title/{text}")
@@ -43,5 +51,10 @@ public class SearchController {
     @GetMapping("/{text}")
     public List<Article> getAll(@PathVariable String text){
        return queryBuilder.getAll(text);
+    }
+
+    @GetMapping("/delete")
+    public boolean delete(){
+        return template.deleteIndex(Article.class);
     }
 }

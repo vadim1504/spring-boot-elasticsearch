@@ -23,9 +23,11 @@ public class SearchQueryBuilder {
                         QueryBuilders.queryStringQuery(text)
                         .lenient(true)
                         .field("title")
+                        .field("tags")
                 ).should(QueryBuilders.queryStringQuery("*"+text+"*")
                         .lenient(true)
                         .field("title")
+                        .field("tags")
                 );
         NativeSearchQuery build = new NativeSearchQueryBuilder().withQuery(query).build();
         return elasticsearchTemplate.queryForList(build, Article.class);
