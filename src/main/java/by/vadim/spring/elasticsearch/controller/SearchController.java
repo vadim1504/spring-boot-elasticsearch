@@ -1,8 +1,10 @@
 package by.vadim.spring.elasticsearch.controller;
 
-import by.vadim.spring.elasticsearch.model.User;
-import by.vadim.spring.elasticsearch.repository.UserRepository;
+import by.vadim.spring.elasticsearch.model.Article;
+import by.vadim.spring.elasticsearch.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,17 +18,22 @@ import java.util.List;
 public class SearchController {
 
     @Autowired
-    private UserRepository userRepository;
+    private ArticleService articleService;
 
     @GetMapping("/name/{text}")
-    public List<User> searchName(@PathVariable String text){
-        return userRepository.findByName(text);
+    public Page<Article> searchName(@PathVariable String text){
+        return articleService.findByAuthorName(text,new PageRequest(0,10));
+    }
+
+    @GetMapping("/title/{text}")
+    public List<Article> searchTitle(@PathVariable String text){
+        return articleService.findByTitle(text);
     }
 
     @GetMapping("/all")
-    public List<User> all(){
-        List<User> users = new ArrayList<>();
-        userRepository.findAll().forEach(users::add);
-        return users;
+    public List<Article> all(){
+        List<Article> articles = new ArrayList<>();
+        articleService.findAll().forEach(articles::add);
+        return articles;
     }
 }
